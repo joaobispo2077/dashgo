@@ -8,9 +8,20 @@ type User = {
   createdAt: string;
 };
 
-export async function getUsers(): Promise<User[]> {
-  const response = await api.get<{ users: User[] }>('/users');
-  const { data } = response;
+type getUsersResponse = {
+  users: User[];
+  totalCount: number;
+};
+
+export async function getUsers(page: number): Promise<getUsersResponse> {
+  const response = await api.get<{ users: User[] }>('/users', {
+    params: {
+      page,
+    },
+  });
+  const { data, headers } = response;
+
+  const totalCount = Number(headers['x-total-count']) || 0;
 
   const users = data.users.map((user) => ({
     id: user.id,
@@ -23,11 +34,11 @@ export async function getUsers(): Promise<User[]> {
     }),
   }));
 
-  return users;
+  return { users, totalCount };
 }
 
-export const useUsers = () => {
-  return useQuery('dashgo@users', getUsers, {
+export const useUsers = (page: number) => {
+  return useQuery(['dashgo@users', page], () => getUsers(page), {
     staleTime: 1000 * 5,
   });
 };

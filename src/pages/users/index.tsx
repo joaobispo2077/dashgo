@@ -25,15 +25,16 @@ import { Sidebar } from '../../components/Sidebar';
 import { useUsers } from '../../hooks/useUsers';
 
 export default function UserList() {
-  const { data, isLoading, isFetching, refetch, error } = useUsers();
+  const [isReloadButtonDisable, setIsReloadButtonDisable] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data, isLoading, isFetching, refetch, error } = useUsers(currentPage);
   const isReloading = !isLoading && isFetching;
 
   const isDesktopScreen = useBreakpointValue({
     base: false,
     lg: true,
   });
-
-  const [isReloadButtonDisable, setIsReloadButtonDisable] = useState(false);
 
   const handleReloadUserList = () => {
     refetch();
@@ -106,7 +107,7 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data.map((user) => (
+                  {data.users.map((user) => (
                     <Tr key={user.id}>
                       <Td px={['4', '4', '6']}>
                         <Checkbox colorScheme="pink" />
@@ -139,9 +140,9 @@ export default function UserList() {
               </Table>
 
               <Pagination
-                totalCountOfRegisters={200}
-                currentPage={5}
-                onPageChange={() => console.log('hayoo')}
+                totalCountOfRegisters={data.totalCount}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
               />
             </>
           )}
