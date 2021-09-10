@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useState } from 'react';
 import {
   useBreakpointValue,
   Box,
@@ -15,8 +16,9 @@ import {
   Tbody,
   Text,
   Spinner,
+  HStack,
 } from '@chakra-ui/react';
-import { RiAddLine, RiPencilLine } from 'react-icons/ri';
+import { RiAddLine, RiPencilLine, RiRefreshLine } from 'react-icons/ri';
 import { Header } from '../../components/Header';
 import { Pagination } from '../../components/Pagination';
 import { Sidebar } from '../../components/Sidebar';
@@ -43,7 +45,7 @@ export default function UserList() {
       return users;
     },
     {
-      staleTime: 10000 * 60 * 5,
+      staleTime: 10 * 60 * 5,
     },
   );
 
@@ -51,6 +53,17 @@ export default function UserList() {
     base: false,
     lg: true,
   });
+
+  const [isReloadButtonDisable, setIsReloadButtonDisable] = useState(false);
+  const isReloading = !isLoading && isFetching;
+
+  const handleReloadUserList = () => {
+    refetch();
+    setIsReloadButtonDisable(true);
+    setTimeout(() => {
+      setIsReloadButtonDisable(false);
+    }, 5000);
+  };
 
   return (
     <Box>
@@ -65,17 +78,31 @@ export default function UserList() {
               {isReloading && <Spinner size="sm" color="gray.500" ml="4" />}
             </Heading>
 
-            <Link href="/users/create" passHref>
+            <HStack spacing="3">
               <Button
                 as="a"
                 size="sm"
                 fontSize="sm"
-                colorScheme="pink"
-                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                colorScheme="blue"
+                leftIcon={<Icon as={RiRefreshLine} fontSize="20" />}
+                onClick={handleReloadUserList}
+                _hover={{ cursor: 'pointer' }}
+                disabled={isReloadButtonDisable}
               >
-                Criar usuário
+                Atualizar
               </Button>
-            </Link>
+              <Link href="/users/create" passHref>
+                <Button
+                  as="a"
+                  size="sm"
+                  fontSize="sm"
+                  colorScheme="pink"
+                  leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                >
+                  Criar usuário
+                </Button>
+              </Link>
+            </HStack>
           </Flex>
           {isLoading ? (
             <Flex justify="center">
