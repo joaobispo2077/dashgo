@@ -39,6 +39,6 @@ export async function getUsers(page: number): Promise<getUsersResponse> {
 
 export const useUsers = (page: number) => {
   return useQuery(['dashgo@users', page], () => getUsers(page), {
-    staleTime: 1000 * 5,
+    staleTime: 1000 * 5, // 5 seconds
   });
 };

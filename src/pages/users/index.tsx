@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useState } from 'react';
 import {
   useBreakpointValue,
@@ -17,12 +17,15 @@ import {
   Text,
   Spinner,
   HStack,
+  Link as ChakraLink,
 } from '@chakra-ui/react';
 import { RiAddLine, RiPencilLine, RiRefreshLine } from 'react-icons/ri';
 import { Header } from '../../components/Header';
 import { Pagination } from '../../components/Pagination';
 import { Sidebar } from '../../components/Sidebar';
 import { useUsers } from '../../hooks/useUsers';
+import { queryClient } from '../../services/queryClient';
+import { api } from '../../services/api';
 
 export default function UserList() {
   const [isReloadButtonDisable, setIsReloadButtonDisable] = useState(false);
@@ -44,6 +47,19 @@ export default function UserList() {
     setTimeout(() => {
       setIsReloadButtonDisable(false);
     }, 5000);
+  };
+
+  const handlePrefetchUser = async (userId: string) => {
+    await queryClient.prefetchQuery(
+      ['dashgo@user', userId],
+      async () => {
+        const response = await api.get(`/users/${userId}`);
+        return response.data;
+      },
+      {
+        staleTime: 1000 * 60 * 10, // 10 minutes
+      },
+    );
   };
 
   return (
@@ -72,7 +88,7 @@ export default function UserList() {
               >
                 Atualizar
               </Button>
-              <Link href="/users/create" passHref>
+              <NextLink href="/users/create" passHref>
                 <Button
                   as="a"
                   size="sm"
@@ -82,7 +98,7 @@ export default function UserList() {
                 >
                   Criar usuário
                 </Button>
-              </Link>
+              </NextLink>
             </HStack>
           </Flex>
           {isLoading ? (
@@ -114,7 +130,12 @@ export default function UserList() {
                       </Td>
                       <Td px={['4', '4', '6']}>
                         <Box>
-                          <Text fontWeight="bold">{user.name}</Text>
+                          <ChakraLink
+                            color="purple.400"
+                            onMouseEnter={() => handlePrefetchUser(user.id)}
+                          >
+                            <Text fontWeight="bold">{user.name}</Text>
+                          </ChakraLink>
                           <Text fontSize="sm" color="gray.300">
                             {user.email}
                           </Text>
@@ -128,6 +149,7 @@ export default function UserList() {
                             size="sm"
                             fontSize="sm"
                             colorScheme="purple"
+                            _hover={{ cursor: 'pointer' }}
                             leftIcon={<Icon as={RiPencilLine} />}
                           >
                             Editar
