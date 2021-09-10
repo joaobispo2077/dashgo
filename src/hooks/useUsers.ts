@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
 import { api } from '../services/api';
 
 type User = {
@@ -9,7 +9,7 @@ type User = {
   createdAt: string;
 };
 
-type getUsersResponse = {
+export type getUsersResponse = {
   users: Omit<User, 'created_at'>[];
   totalCount: number;
 };
@@ -38,8 +38,9 @@ export async function getUsers(page: number): Promise<getUsersResponse> {
   return { users, totalCount };
 }
 
-export const useUsers = (page: number) => {
+export const useUsers = (page: number, options?: UseQueryOptions) => {
   return useQuery(['dashgo@users', page], () => getUsers(page), {
-    staleTime: 1000 * 60 * 10, // 10 minutes
-  });
+    staleTime: 1000 * 60 * 10, // 10 minutes,
+    ...options,
+  }) as UseQueryResult<getUsersResponse>;
 };

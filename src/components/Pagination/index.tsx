@@ -12,7 +12,7 @@ const siblingsCount = 1;
 
 function generatePagesArray(from: number, to: number): number[] {
   return Object.keys(Array.from(Array(to - from)))
-    .map((_, index) => Number(from + index + 1))
+    .map((_, index) => Math.floor(Number(from + index + 1)))
     .filter((page) => page > 0);
 }
 
@@ -22,7 +22,7 @@ export function Pagination({
   currentPage = 1,
   onPageChange,
 }: PaginationProps) {
-  const lastPage = totalCountOfRegisters / registersPerPage;
+  const lastPage = Math.floor(totalCountOfRegisters / registersPerPage);
 
   const previousPages =
     currentPage > 1

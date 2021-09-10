@@ -178,3 +178,13 @@ export default function UserList() {
     </Box>
   );
 }
+
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const initialData = await getUsers(1);
+
+//   return {
+//     props: {
+//       initialData,
+//     },
+//   };
+// };
