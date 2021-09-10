@@ -1,4 +1,10 @@
-import { createServer, Factory, Model, Response } from 'miragejs';
+import {
+  ActiveModelSerializer,
+  createServer,
+  Factory,
+  Model,
+  Response,
+} from 'miragejs';
 import faker from 'faker';
 
 type User = {
@@ -9,13 +15,16 @@ type User = {
 
 export function makeServer() {
   const server = createServer({
+    serializers: {
+      application: ActiveModelSerializer,
+    },
     models: {
       user: Model.extend<Partial<User>>({}),
     },
     factories: {
       user: Factory.extend({
-        name(index: number) {
-          return `User ${index + 1}`;
+        name() {
+          return faker.name.findName();
         },
         email() {
           return faker.internet.email().toLocaleLowerCase();

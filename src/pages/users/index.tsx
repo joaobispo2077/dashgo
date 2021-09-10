@@ -16,7 +16,7 @@ import {
   Tbody,
   Text,
   Spinner,
-  HStack,
+  Stack,
   Link as ChakraLink,
 } from '@chakra-ui/react';
 import { RiAddLine, RiPencilLine, RiRefreshLine } from 'react-icons/ri';
@@ -75,7 +75,7 @@ export default function UserList() {
               {isReloading && <Spinner size="sm" color="gray.500" ml="4" />}
             </Heading>
 
-            <HStack spacing="3">
+            <Stack direction={['column', 'row']} spacing="3">
               <Button
                 as="a"
                 size="sm"
@@ -83,7 +83,8 @@ export default function UserList() {
                 colorScheme="blue"
                 leftIcon={<Icon as={RiRefreshLine} fontSize="20" />}
                 onClick={handleReloadUserList}
-                _hover={{ cursor: 'pointer' }}
+                transition="filter 0.25s ease-in-out"
+                _hover={{ cursor: 'pointer', filter: 'brightness(80%)' }}
                 disabled={isReloadButtonDisable}
               >
                 Atualizar
@@ -99,7 +100,7 @@ export default function UserList() {
                   Criar usuário
                 </Button>
               </NextLink>
-            </HStack>
+            </Stack>
           </Flex>
           {isLoading ? (
             <Flex justify="center">
@@ -149,7 +150,11 @@ export default function UserList() {
                             size="sm"
                             fontSize="sm"
                             colorScheme="purple"
-                            _hover={{ cursor: 'pointer' }}
+                            transition="filter 0.25s ease-in-out"
+                            _hover={{
+                              cursor: 'pointer',
+                              filter: 'brightness(80%)',
+                            }}
                             leftIcon={<Icon as={RiPencilLine} />}
                           >
                             Editar
